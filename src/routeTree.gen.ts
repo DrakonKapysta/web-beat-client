@@ -14,6 +14,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MusicUploadRouteImport } from './routes/music/upload'
+import { Route as MusicEditorRouteImport } from './routes/music/editor'
 
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
@@ -30,34 +31,43 @@ const MusicUploadRoute = MusicUploadRouteImport.update({
   path: '/music/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MusicEditorRoute = MusicEditorRouteImport.update({
+  id: '/music/editor',
+  path: '/music/editor',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/music/editor': typeof MusicEditorRoute
   '/music/upload': typeof MusicUploadRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/music/editor': typeof MusicEditorRoute
   '/music/upload': typeof MusicUploadRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/music/editor': typeof MusicEditorRoute
   '/music/upload': typeof MusicUploadRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/music/upload'
+  fullPaths: '/' | '/about' | '/music/editor' | '/music/upload'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/music/upload'
-  id: '__root__' | '/' | '/about' | '/music/upload'
+  to: '/' | '/about' | '/music/editor' | '/music/upload'
+  id: '__root__' | '/' | '/about' | '/music/editor' | '/music/upload'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  MusicEditorRoute: typeof MusicEditorRoute
   MusicUploadRoute: typeof MusicUploadRoute
 }
 
@@ -75,6 +85,13 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/music/editor': {
+      id: '/music/editor'
+      path: '/music/editor'
+      fullPath: '/music/editor'
+      preLoaderRoute: typeof MusicEditorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/music/upload': {
@@ -105,6 +122,15 @@ declare module './routes/about' {
     FileRoutesByPath['/about']['fullPath']
   >
 }
+declare module './routes/music/editor' {
+  const createFileRoute: CreateFileRoute<
+    '/music/editor',
+    FileRoutesByPath['/music/editor']['parentRoute'],
+    FileRoutesByPath['/music/editor']['id'],
+    FileRoutesByPath['/music/editor']['path'],
+    FileRoutesByPath['/music/editor']['fullPath']
+  >
+}
 declare module './routes/music/upload' {
   const createFileRoute: CreateFileRoute<
     '/music/upload',
@@ -118,6 +144,7 @@ declare module './routes/music/upload' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  MusicEditorRoute: MusicEditorRoute,
   MusicUploadRoute: MusicUploadRoute,
 }
 export const routeTree = rootRouteImport
