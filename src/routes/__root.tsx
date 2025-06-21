@@ -1,15 +1,26 @@
 import { Button } from "@/components/ui/button";
+import type { QueryClient } from "@tanstack/react-query";
 import {
-  createRootRoute,
+  createRootRouteWithContext,
   Link,
   Outlet,
   useLocation,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
-export const Route = createRootRoute({
-  component: RootComponent,
-});
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
+  {
+    component: RootComponent,
+    notFoundComponent: () => {
+      return (
+        <div>
+          <p>This is the notFoundComponent configured on root route</p>
+          <Link to="/">Start Over</Link>
+        </div>
+      );
+    },
+  }
+);
 
 function RootComponent() {
   const location = useLocation();
@@ -143,7 +154,6 @@ function RootComponent() {
         <div className="flex-1 overflow-auto scrollbar-hidden">
           <Outlet />
         </div>
-
         <TanStackRouterDevtools />
       </div>
     </>

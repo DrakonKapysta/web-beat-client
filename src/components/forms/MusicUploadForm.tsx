@@ -195,7 +195,7 @@ export const MusicUploadForm: React.FC<FileUploadFormProps> = ({
             <Input
               placeholder="Enter track name"
               disabled={isUploading}
-              className="bg-white/10 border-white/20 text-white placeholder-gray-400 focus:border-purple-400 focus:ring-purple-400"
+              className="bg-white/10 border-white/20 text-white placeholder:text-gray-300 focus:border-purple-400 focus:ring-purple-400"
               {...register("fileName", { required: "Track name is required" })}
             />
             {errors.fileName && (
@@ -210,7 +210,7 @@ export const MusicUploadForm: React.FC<FileUploadFormProps> = ({
             <Input
               placeholder="Enter artist name"
               disabled={isUploading}
-              className="bg-white/10 border-white/20 text-white placeholder-gray-400 focus:border-purple-400 focus:ring-purple-400"
+              className="bg-white/10 border-white/20 text-white placeholder:text-gray-300 focus:border-purple-400 focus:ring-purple-400"
               {...register("author", { required: "Artist is required" })}
             />
             {errors.author && (
@@ -225,7 +225,7 @@ export const MusicUploadForm: React.FC<FileUploadFormProps> = ({
             <Input
               placeholder="Enter album name"
               disabled={isUploading}
-              className="bg-white/10 border-white/20 text-white placeholder-gray-400 focus:border-purple-400 focus:ring-purple-400"
+              className="bg-white/10 border-white/20 text-white placeholder:text-gray-300 focus:border-purple-400 focus:ring-purple-400"
               {...register("album", { required: "Album is required" })}
             />
             {errors.album && (
@@ -240,7 +240,7 @@ export const MusicUploadForm: React.FC<FileUploadFormProps> = ({
             <Input
               placeholder="Enter genre"
               disabled={isUploading}
-              className="bg-white/10 border-white/20 text-white placeholder-gray-400 focus:border-purple-400 focus:ring-purple-400"
+              className="bg-white/10 border-white/20 text-white placeholder:text-gray-300 focus:border-purple-400 focus:ring-purple-400"
               {...register("genre", { required: "Genre is required" })}
             />
             {errors.genre && (
@@ -258,7 +258,7 @@ export const MusicUploadForm: React.FC<FileUploadFormProps> = ({
               type="number"
               placeholder="Enter release year"
               disabled={isUploading}
-              className="bg-white/10 border-white/20 text-white placeholder-gray-400 focus:border-purple-400 focus:ring-purple-400"
+              className="bg-white/10 border-white/20 text-white placeholder:text-gray-300 focus:border-purple-400 focus:ring-purple-400"
               {...register("year", {
                 required: "Year is required",
                 min: { value: 1900, message: "Year must be after 1900" },
