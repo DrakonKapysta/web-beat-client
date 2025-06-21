@@ -1,11 +1,63 @@
+import { CanvasHelper } from "@/lib/CanvasHelper";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export const useAudio = () => {
+  console.log("Hook fired");
   const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const trackRef = useRef<MediaElementAudioSourceNode | null>(null);
   const modificatorsRef = useRef<Record<string, AudioNode>>({});
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const canvasHelperRef = useRef<CanvasHelper | null>(null);
+
+  const formatTime = useCallback((time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  }, []);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    setIsLoading(true);
+    const handleTimeUpdate = () => {
+      setCurrentTime(audio.currentTime);
+    };
+
+    const handleLoadedMetadata = () => {
+      setDuration(audio.duration);
+      if (audio.readyState >= 2) {
+        setIsLoading(false);
+      }
+    };
+
+    const handleEnded = () => {
+      setIsPlaying(false);
+      setCurrentTime(0);
+    };
+
+    audio.addEventListener("timeupdate", handleTimeUpdate);
+    audio.addEventListener("loadedmetadata", handleLoadedMetadata);
+    audio.addEventListener("ended", handleEnded);
+
+    return () => {
+      audio.removeEventListener("timeupdate", handleTimeUpdate);
+      audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+      audio.removeEventListener("ended", handleEnded);
+    };
+  }, []);
+
+  const seekTo = useCallback((time: number) => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = time;
+      setCurrentTime(time);
+    }
+  }, []);
 
   useEffect(() => {
     if (!audioContextRef.current) {
@@ -22,15 +74,44 @@ export const useAudio = () => {
       trackRef.current = track;
       const gainNode = audioContextRef.current.createGain();
       const panner = audioContextRef.current.createStereoPanner();
+      const visualizer = audioContextRef.current.createAnalyser();
+      visualizer.fftSize = 1024;
+
       panner.pan.value = 0;
       modificatorsRef.current.gain = gainNode;
       modificatorsRef.current.panner = panner;
+      modificatorsRef.current.visualizer = visualizer;
 
       track
         .connect(gainNode)
         .connect(panner)
+        .connect(visualizer)
         .connect(audioContextRef.current.destination);
+
+      if (canvasRef.current) {
+        const WIDTH = canvasRef.current.width || 300;
+        const HEIGHT = canvasRef.current.height || 64;
+        const data = new Uint8Array(visualizer.frequencyBinCount);
+        const canvasHelper = new CanvasHelper(
+          canvasRef.current,
+          WIDTH,
+          HEIGHT,
+          data,
+          visualizer.frequencyBinCount,
+          visualizer
+        );
+        canvasHelper.setCanvasSize(WIDTH, HEIGHT);
+        canvasHelper.init();
+        canvasHelperRef.current = canvasHelper;
+      }
     }
+  }, []);
+
+  const getVolume = useCallback(() => {
+    if (modificatorsRef.current.gain) {
+      return (modificatorsRef.current.gain as GainNode).gain.value;
+    }
+    return 0;
   }, []);
 
   const addModifier = useCallback(
@@ -108,10 +189,16 @@ export const useAudio = () => {
     setIsPlaying((prev) => {
       if (prev) {
         audioRef.current?.pause();
+        if (canvasHelperRef.current) {
+          canvasHelperRef.current.stopAnimation();
+        }
       } else {
         audioRef.current?.play().catch((error) => {
           console.error("Error playing audio:", error);
         });
+        if (canvasHelperRef.current) {
+          canvasHelperRef.current.drawWave();
+        }
       }
       return !prev;
     });
@@ -133,6 +220,14 @@ export const useAudio = () => {
     audioRef,
     audioContextRef,
     isPlaying,
+    canvasRef,
+    canvasHelperRef,
+    currentTime,
+    duration,
+    isLoading,
+    formatTime,
+    seekTo,
+    getVolume,
     handlePlayPause,
     setupAudioTrack,
     handleVolumeChange,
