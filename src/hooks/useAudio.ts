@@ -1,8 +1,8 @@
 import { CanvasHelper } from "@/lib/CanvasHelper";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { set } from "react-hook-form";
 
 export const useAudio = () => {
-  console.log("Hook fired");
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -14,12 +14,6 @@ export const useAudio = () => {
   const modificatorsRef = useRef<Record<string, AudioNode>>({});
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasHelperRef = useRef<CanvasHelper | null>(null);
-
-  const formatTime = useCallback((time: number) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-  }, []);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -175,6 +169,21 @@ export const useAudio = () => {
     currentNode.connect(audioContextRef.current.destination);
   }, []);
 
+  const pauseAudio = useCallback(() => {
+    if (!audioRef.current || !audioContextRef.current) {
+      return;
+    }
+    if (audioContextRef.current.state === "suspended") {
+      audioContextRef.current.resume().catch((error) => {
+        console.error("Error resuming audio context:", error);
+      });
+    }
+    if (canvasHelperRef.current) {
+      canvasHelperRef.current.stopAnimation();
+    }
+    setIsPlaying(false);
+  }, []);
+
   const handlePlayPause = useCallback(() => {
     if (!audioRef.current || !audioContextRef.current) {
       return;
@@ -225,13 +234,13 @@ export const useAudio = () => {
     currentTime,
     duration,
     isLoading,
-    formatTime,
     seekTo,
     getVolume,
     handlePlayPause,
     setupAudioTrack,
     handleVolumeChange,
     addModifier,
+    pauseAudio,
     removeModifier,
     handlePannerChange,
   };
