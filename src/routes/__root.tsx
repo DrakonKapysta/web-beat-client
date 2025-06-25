@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { AuthProvider } from "@/providers/auth/AuthProvider";
 import type { QueryClient } from "@tanstack/react-query";
 import {
   createRootRouteWithContext,
@@ -151,12 +152,19 @@ function RootComponent() {
 
   // Мемоизируем проверку для избежания лишних вычислений
   const shouldHideHeader = useMemo(() => {
-    const pagesWithoutHeader = ["/", "/landing", "/welcome", "/intro"];
+    const pagesWithoutHeader = [
+      "/",
+      "/landing",
+      "/welcome",
+      "/intro",
+      "/auth/login",
+      "/auth/register",
+    ];
     return pagesWithoutHeader.includes(location.pathname);
   }, [location.pathname]);
 
   return (
-    <>
+    <AuthProvider>
       <div className="h-screen flex flex-col overflow-hidden">
         {!shouldHideHeader && <Header />}
 
@@ -165,6 +173,6 @@ function RootComponent() {
         </div>
         <TanStackRouterDevtools />
       </div>
-    </>
+    </AuthProvider>
   );
 }

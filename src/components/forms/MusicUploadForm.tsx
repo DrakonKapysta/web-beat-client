@@ -34,7 +34,7 @@ export const MusicUploadForm: React.FC<FileUploadFormProps> = ({
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
     if (data.files && data.files.length > 0) {
       const musicData: UploadMusicData = {
-        fileName: data.fileName,
+        title: data.title,
         author: data.author,
         album: data.album,
         genre: data.genre,
@@ -196,11 +196,11 @@ export const MusicUploadForm: React.FC<FileUploadFormProps> = ({
               placeholder="Enter track name"
               disabled={isUploading}
               className="bg-white/10 border-white/20 text-white placeholder:text-gray-300 focus:border-purple-400 focus:ring-purple-400"
-              {...register("fileName", { required: "Track name is required" })}
+              {...register("title", { required: "Track name is required" })}
             />
-            {errors.fileName && (
+            {errors.title && (
               <span className="text-red-400 text-sm">
-                {errors.fileName.message}
+                {errors.title.message}
               </span>
             )}
           </div>

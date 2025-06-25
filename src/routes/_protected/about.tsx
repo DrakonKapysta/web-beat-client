@@ -15,7 +15,6 @@ function About() {
     { id: 3, name: "Bass", color: "bg-green-500", active: false },
     { id: 4, name: "Drums", color: "bg-red-500", active: true },
   ]);
-  const [forsedUpdate, setForcedUpdate] = useState(0);
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-amber-300">
@@ -30,9 +29,6 @@ function About() {
 
   return (
     <div>
-      <Button onClick={() => setForcedUpdate((prev) => prev + 1)}>
-        Update
-      </Button>
       <div className="p-4 space-y-4">
         {tracks.map((track) => (
           <div key={track.id} className="h-16 relative">

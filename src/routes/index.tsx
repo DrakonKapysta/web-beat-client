@@ -228,7 +228,7 @@ function Index() {
             tracks.
           </p>
           <Link
-            to="/music/upload"
+            to="/auth/login"
             className="mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-purple-600 bg-white hover:bg-purple-50 sm:w-auto transition-all duration-300 transform hover:scale-105"
           >
             Get Started Now
