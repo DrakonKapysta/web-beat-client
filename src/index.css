@@ -73,6 +73,19 @@
   }
 }
 
+@keyframes dash-offset {
+  from {
+    stroke-dashoffset: -22;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-dashOffset {
+  animation: dash-offset 1s linear forwards;
+}
+
 .animate-float {
   animation: float 3s ease-in-out infinite;
 }

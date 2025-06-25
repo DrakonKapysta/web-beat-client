@@ -1,5 +1,5 @@
 export interface UploadMusicData {
-  fileName: string;
+  title: string;
   author: string;
   album: string;
   genre: string;
