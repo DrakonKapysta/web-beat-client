@@ -18,8 +18,3 @@ export interface RegisterData {
   login: string;
   password: string;
 }
-
-export interface RegisterResponse {
-  _id: string;
-  email: string;
-}

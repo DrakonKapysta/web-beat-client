@@ -1,18 +1,16 @@
 import type { LoginData } from "@/types/auth";
 import authHelper from "@/api/auth/AuthHelper";
 
-export const loginAPI = async (
-  loginData: LoginData
-): Promise<{ access_token: string }> => {
-  const { data } = await authHelper.axios.post<{ access_token: string }>(
-    "/auth/login",
-    loginData,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
+export const loginAPI = async (loginData: LoginData) => {
+  const response = await authHelper.axios.post<{
+    user: { id: string; email: string };
+    access_token: string;
+  }>("/auth/login", loginData, {
+    withCredentials: true,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 
-  return data;
+  return response;
 };
