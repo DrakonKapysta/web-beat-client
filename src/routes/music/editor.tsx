@@ -4,11 +4,11 @@ import { musicsQueryOptions } from "@/api/music/musicsQueryOptions";
 import { useQuery } from "@tanstack/react-query";
 import { MusicLoader } from "@/components/MusicLoader";
 import { MusicError } from "@/components/MusicError";
-import { TransportControls } from "@/components/TransportControls";
 import { EditorHeader } from "@/components/EditorHeader";
 import { SideTrackList } from "@/components/SideTrackList";
 import { TimeRuler } from "@/components/TimeRuler";
 import { EditorToolsPannel } from "@/components/EditorToolsPannel";
+import { TransportControls } from "@/components/TransportControls/TransportControls";
 
 export const Route = createFileRoute({
   component: MusicEditor,
@@ -21,6 +21,7 @@ function MusicEditor() {
     handleVolumeChange,
     pauseAudio,
     getVolume,
+    initCanvas,
     isLoading: isAudioLoading,
     canvasHelperRef,
     audioRef,
@@ -144,14 +145,34 @@ function MusicEditor() {
             {/* Editor Interface */}
             <div className="flex-1 flex flex-col space-y-6">
               {/* Transport Controls */}
-              <TransportControls
-                currentTime={currentTime}
-                duration={duration}
-                handlePlayPause={handlePlayPause}
-                handleVolumeChange={handleVolumeChange}
-                isPlaying={isPlaying}
-                seekTo={seekTo}
-              />
+              <TransportControls>
+                <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4 mr-4">
+                      <TransportControls.StartButton
+                        handlePlay={handlePlayPause}
+                        isPlaying={isPlaying}
+                      />
+                      <TransportControls.PrevButton />
+                      <TransportControls.NextButton />
+                    </div>
+                    <TransportControls.Progress
+                      currentTime={currentTime}
+                      duration={duration}
+                      seekTo={seekTo}
+                    />
+                    <div className="flex items-center space-x-4 shrink-0 ml-4">
+                      <TransportControls.Time
+                        currentTime={currentTime}
+                        duration={duration}
+                      />
+                      <TransportControls.Volume
+                        handleVolumeChange={handleVolumeChange}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </TransportControls>
               {/* Track Editor */}
               <div className="flex-1 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 overflow-hidden">
                 <div className="flex h-full">
@@ -179,12 +200,17 @@ function MusicEditor() {
                           </div>
                         ))}
                         <div
-                          ref={containerRef}
-                          className=" max-h-16 max-w-full "
+                          ref={(element: HTMLDivElement) => {
+                            containerRef.current = element;
+                            resizeCanvas();
+                          }}
+                          className="max-h-16 max-w-full"
                         >
                           <canvas
                             className="w-full max-h-16 rounded"
-                            ref={canvasRef}
+                            ref={(element: HTMLCanvasElement) => {
+                              initCanvas(element);
+                            }}
                           ></canvas>
                         </div>
                       </div>

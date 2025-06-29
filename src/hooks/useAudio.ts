@@ -1,6 +1,5 @@
 import { CanvasHelper } from "@/lib/CanvasHelper";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { set } from "react-hook-form";
 
 export const useAudio = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -98,6 +97,27 @@ export const useAudio = () => {
         canvasHelper.init();
         canvasHelperRef.current = canvasHelper;
       }
+    }
+  }, []);
+
+  const initCanvas = useCallback((canvasElement: HTMLCanvasElement) => {
+    if (canvasElement) {
+      canvasRef.current = canvasElement;
+      const visualizer = modificatorsRef.current.visualizer as AnalyserNode;
+      const WIDTH = canvasRef.current.width || 300;
+      const HEIGHT = canvasRef.current.height || 64;
+      const data = new Uint8Array(visualizer.frequencyBinCount);
+      const canvasHelper = new CanvasHelper(
+        canvasRef.current,
+        WIDTH,
+        HEIGHT,
+        data,
+        visualizer.frequencyBinCount,
+        visualizer
+      );
+      canvasHelper.setCanvasSize(WIDTH, HEIGHT);
+      canvasHelper.init();
+      canvasHelperRef.current = canvasHelper;
     }
   }, []);
 
@@ -234,6 +254,7 @@ export const useAudio = () => {
     currentTime,
     duration,
     isLoading,
+    initCanvas,
     seekTo,
     getVolume,
     handlePlayPause,
