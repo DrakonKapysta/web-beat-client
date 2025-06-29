@@ -1,10 +1,8 @@
-import type { RegisterData, RegisterResponse } from "@/types/auth";
+import type { RegisterData, User } from "@/types/auth";
 import authHelper from "@/api/auth/AuthHelper";
 
-export const registerAPI = async (
-  registerData: RegisterData
-): Promise<RegisterResponse> => {
-  const { data } = await authHelper.axios.post<RegisterResponse>(
+export const registerAPI = async (registerData: RegisterData) => {
+  const response = await authHelper.axios.post<{ user: User }>(
     "/auth/register",
     registerData,
     {
@@ -14,5 +12,5 @@ export const registerAPI = async (
     }
   );
 
-  return data;
+  return response;
 };

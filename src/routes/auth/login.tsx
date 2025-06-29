@@ -2,19 +2,27 @@ import { LoginForm } from "@/components/forms/LoginForm";
 import { MusicLoader } from "@/components/MusicLoader";
 import { useAuth } from "@/hooks/useAuth";
 import type { LoginData } from "@/types/auth";
-import { Link } from "@tanstack/react-router";
+import { Link, redirect } from "@tanstack/react-router";
 import { Check } from "lucide-react";
 import React, { useEffect } from "react";
 import { BackLink } from "./-components/BackLink";
 import { useRedirectTimer } from "@/hooks/useRedirectTimer";
 
 export const Route = createFileRoute({
+  beforeLoad: () => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("access_token");
+      if (token) {
+        throw redirect({ to: "/music/editor" });
+      }
+    }
+  },
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const { isLoading, isAuthenticated, login, user } = useAuth();
-  const { time, start, isRunning } = useRedirectTimer({
+  const { isLoading, isAuthenticated, login, error } = useAuth();
+  const { time, start } = useRedirectTimer({
     redirectPath: "/",
     startTime: 5,
   });
@@ -24,7 +32,6 @@ function RouteComponent() {
   }, [isAuthenticated, start]);
 
   const handleSubmit = (data: LoginData) => {
-    console.log(data);
     login(data);
   };
 
@@ -96,6 +103,11 @@ function RouteComponent() {
                 <div className="w-full">
                   <LoginForm onSubmit={handleSubmit} />
                   {/* Divider */}
+                  {error && (
+                    <p className="text-red-500 block w-full mt-6 text-center">
+                      {error}
+                    </p>
+                  )}
                   <div className="my-6 flex items-center w-full">
                     <div className="flex-1 h-px bg-gradient-to-r from-transparent via-purple-300 to-transparent"></div>
                     <span className="px-4 text-purple-200 text-sm">or</span>
@@ -129,20 +141,22 @@ function RouteComponent() {
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center max-w-28 w-full min-h-28 rounded-full bg-green-500">
-                  <Check
-                    strokeDasharray={100}
-                    color="white"
-                    className="w-1/2 h-1/2 animate-dashOffset"
-                  />
-                </div>
+                <>
+                  <div className="flex flex-col items-center justify-center max-w-28 w-full min-h-28 rounded-full bg-green-500">
+                    <Check
+                      strokeDasharray={100}
+                      color="white"
+                      className="w-1/2 h-1/2 animate-dashOffset "
+                    />
+                  </div>
+                  {isAuthenticated && (
+                    <p className="block mt-4 text-white text-xl">
+                      Time for redirect: <span>{time}</span>
+                    </p>
+                  )}
+                </>
               )}
             </div>
-            {isAuthenticated && (
-              <p>
-                Time for redirect: <span>{time}</span>
-              </p>
-            )}
 
             {/* Footer */}
             <div className="text-center mt-8">

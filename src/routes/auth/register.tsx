@@ -1,8 +1,16 @@
 import RegisterForm from "@/components/forms/RegisterForm";
-import { Link } from "@tanstack/react-router";
+import { Link, redirect } from "@tanstack/react-router";
 import React from "react";
 
 export const Route = createFileRoute({
+  beforeLoad: () => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("access_token");
+      if (token) {
+        throw redirect({ to: "/music/editor" });
+      }
+    }
+  },
   component: RouteComponent,
 });
 

@@ -18,45 +18,59 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isAuthenticated: false,
     isLoading: false,
   });
+  const [error, setError] = React.useState<string | null>(null);
 
-  const login = async (data: LoginData): Promise<void> => {
+  React.useEffect(() => {
+    const accessToken = localStorage.getItem("access_token");
+    if (accessToken) {
+      setAuthState({ user: null, isAuthenticated: true, isLoading: false });
+    }
+  }, []);
+
+  const login = async (loginData: LoginData): Promise<void> => {
     try {
       setAuthState((prev) => ({ ...prev, isLoading: true }));
-      const { access_token } = await loginAPI(data);
+      const { data, status } = await loginAPI(loginData);
+
+      if (status !== 200) {
+        throw new Error("Login failed");
+      }
 
       if (typeof window !== "undefined") {
-        localStorage.setItem("access_token", access_token);
+        localStorage.setItem("access_token", data.access_token);
       }
 
       setAuthState({
-        user: null,
+        user: data.user,
         isAuthenticated: true,
         isLoading: false,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Login error:", error);
-      throw error;
+      setError((error as Error).message);
+      setTimeout(() => setError(null), 5000);
     } finally {
       setAuthState((prev) => ({ ...prev, isLoading: false }));
     }
   };
 
-  const register = async (data: RegisterData): Promise<void> => {
+  const register = async (registerData: RegisterData): Promise<void> => {
     try {
       setAuthState((prev) => ({ ...prev, isLoading: true }));
-      const { _id: id, email } = await registerAPI(data);
+      const { data, status } = await registerAPI(registerData);
+
+      if (status !== 201) {
+        throw new Error("Registration failed");
+      }
 
       setAuthState({
-        user: {
-          email,
-          id,
-        },
+        user: data.user,
         isAuthenticated: true,
         isLoading: false,
       });
-    } catch (error) {
-      console.error("Registration error:", error);
-      throw error;
+    } catch (error: unknown) {
+      setError((error as Error).message);
+      setTimeout(() => setError(null), 5000);
     } finally {
       setAuthState((prev) => ({ ...prev, isLoading: false }));
     }
@@ -111,6 +125,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     <AuthContext.Provider
       value={{
         ...authState,
+        error,
         login,
         register,
         logout,
