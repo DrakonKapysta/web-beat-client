@@ -12,6 +12,8 @@ export interface MusicType {
   year: number;
 
   posterUrl?: string;
+  fileHash: string;
+  filePath: string;
 
   metadata?: Record<string, any>;
 

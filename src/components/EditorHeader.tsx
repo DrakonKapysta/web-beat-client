@@ -106,7 +106,9 @@ export const EditorHeader: FC<EditorHeaderProps> = memo(
                 {musics?.map((music) => (
                   <Button
                     onClick={() => {
-                      setSelectedAudio(music.metadata?.originalName);
+                      setSelectedAudio(
+                        music.fileHash + "." + music.metadata?.extension
+                      );
                       if (pauseAudio) {
                         pauseAudio();
                       }
