@@ -80,45 +80,46 @@ export const useAudio = () => {
         .connect(panner)
         .connect(visualizer)
         .connect(audioContextRef.current.destination);
-
-      if (canvasRef.current) {
-        const WIDTH = canvasRef.current.width || 300;
-        const HEIGHT = canvasRef.current.height || 64;
-        const data = new Uint8Array(visualizer.frequencyBinCount);
-        const canvasHelper = new CanvasHelper(
-          canvasRef.current,
-          WIDTH,
-          HEIGHT,
-          data,
-          visualizer.frequencyBinCount,
-          visualizer
-        );
-        canvasHelper.setCanvasSize(WIDTH, HEIGHT);
-        canvasHelper.init();
-        canvasHelperRef.current = canvasHelper;
-      }
     }
+    return () => {
+      console.log("Cleaning up canvas helper");
+      if (canvasHelperRef.current) {
+        canvasHelperRef.current.stopAnimation();
+        canvasHelperRef.current = null;
+      }
+    };
   }, []);
 
   const initCanvas = useCallback((canvasElement: HTMLCanvasElement) => {
-    if (canvasElement) {
-      canvasRef.current = canvasElement;
-      const visualizer = modificatorsRef.current.visualizer as AnalyserNode;
-      const WIDTH = canvasRef.current.width || 300;
-      const HEIGHT = canvasRef.current.height || 64;
-      const data = new Uint8Array(visualizer.frequencyBinCount);
-      const canvasHelper = new CanvasHelper(
-        canvasRef.current,
-        WIDTH,
-        HEIGHT,
-        data,
-        visualizer.frequencyBinCount,
-        visualizer
-      );
-      canvasHelper.setCanvasSize(WIDTH, HEIGHT);
-      canvasHelper.init();
-      canvasHelperRef.current = canvasHelper;
+    if (!canvasElement || !audioRef.current || !audioContextRef.current) return;
+
+    if (canvasHelperRef.current && canvasRef.current === canvasElement) return;
+
+    if (canvasHelperRef.current) {
+      canvasHelperRef.current.stopAnimation();
+      canvasHelperRef.current = null;
     }
+
+    canvasRef.current = canvasElement;
+    const visualizer = modificatorsRef.current.visualizer as AnalyserNode;
+    if (!visualizer) return;
+
+    const WIDTH = canvasRef.current.width || 300;
+    const HEIGHT = canvasRef.current.height || 64;
+    const data = new Uint8Array(visualizer.frequencyBinCount);
+    const canvasHelper = new CanvasHelper(
+      canvasRef.current,
+      WIDTH,
+      HEIGHT,
+      data,
+      visualizer.frequencyBinCount,
+      visualizer
+    );
+    canvasHelper.setCanvasSize(WIDTH, HEIGHT);
+    canvasHelper.init();
+    canvasHelperRef.current = canvasHelper;
+
+    console.log("Canvas helper initialized");
   }, []);
 
   const getVolume = useCallback(() => {
@@ -128,28 +129,25 @@ export const useAudio = () => {
     return 0;
   }, []);
 
-  const addModifier = useCallback(
-    (name: string, node: AudioNode, options?: object) => {
-      if (!trackRef.current || !audioContextRef.current) return;
+  const addModifier = useCallback((name: string, node: AudioNode) => {
+    if (!trackRef.current || !audioContextRef.current) return;
 
-      modificatorsRef.current[name] = node;
+    modificatorsRef.current[name] = node;
 
-      trackRef.current.disconnect();
+    trackRef.current.disconnect();
 
-      let currentNode: AudioNode = trackRef.current;
-      const modifiers = modificatorsRef.current;
+    let currentNode: AudioNode = trackRef.current;
+    const modifiers = modificatorsRef.current;
 
-      for (const key in modifiers) {
-        if (modifiers[key] instanceof AudioNode) {
-          currentNode.connect(modifiers[key]);
-          currentNode = modifiers[key];
-        }
+    for (const key in modifiers) {
+      if (modifiers[key] instanceof AudioNode) {
+        currentNode.connect(modifiers[key]);
+        currentNode = modifiers[key];
       }
+    }
 
-      currentNode.connect(audioContextRef.current.destination);
-    },
-    []
-  );
+    currentNode.connect(audioContextRef.current.destination);
+  }, []);
 
   const removeModifier = useCallback((name: string) => {
     if (!trackRef.current || !audioContextRef.current) return;

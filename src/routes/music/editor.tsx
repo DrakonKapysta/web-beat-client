@@ -77,7 +77,7 @@ function MusicEditor() {
         src={
           musics &&
           musics[0] &&
-          `http://localhost:3000/api/music/stream/${selectedAudio ? selectedAudio : musics[0].metadata?.originalName}`
+          `http://localhost:3000/api/music/stream/${selectedAudio ? selectedAudio : musics[0].fileHash + "." + musics[0].metadata?.extension}`
         }
         crossOrigin="anonymous"
         className="hidden"

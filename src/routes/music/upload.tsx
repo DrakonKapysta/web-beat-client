@@ -1,5 +1,6 @@
 import { MusicUploadForm } from "@/components/forms/MusicUploadForm";
 import type { UploadMusicData } from "@/components/forms/types/UploadMusic.dto";
+import { UploadConstruction } from "@/components/under-construction/UploadConstruction";
 import { useFileUpload } from "@/hooks/useFileUpload";
 
 export const Route = createFileRoute({
@@ -25,6 +26,8 @@ function MusicUpload() {
       return false;
     }
   };
+
+  return <UploadConstruction />;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 relative overflow-hidden ">
@@ -72,7 +75,7 @@ function MusicUpload() {
                 <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
               </svg>
             </div>
-            <h1 className="text-4xl font-bold text-white mb-2 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
               Share Your Music
             </h1>
             <p className="text-gray-300 text-lg">

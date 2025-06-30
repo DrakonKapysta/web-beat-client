@@ -12,12 +12,12 @@ export function useFileUpload() {
   ) => {
     setIsUploading(true);
     setError(null);
-
+    // FIX: multipart/form-data must have music file and poster file to upload, not just 'file'
     try {
       const formData = new FormData();
 
       Array.from(files).forEach((file) => {
-        formData.append("file", file);
+        formData.append("file", file); // must be 'music' and 'poste (optional)'
       });
 
       if (poster) {
@@ -25,7 +25,7 @@ export function useFileUpload() {
       }
 
       if (data) {
-        formData.append("fileName", data.fileName);
+        formData.append("fileName", data.title);
         formData.append("author", data.author);
         formData.append("album", data.album);
         formData.append("genre", data.genre);
