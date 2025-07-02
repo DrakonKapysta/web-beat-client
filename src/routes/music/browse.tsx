@@ -18,6 +18,7 @@ import {
   Filter,
 } from "lucide-react";
 import { useState, useMemo } from "react";
+import { formatTime } from "@/lib/formatTime";
 
 export const Route = createFileRoute({
   component: BrowseMusic,
@@ -78,7 +79,6 @@ function BrowseMusic() {
     }
     setPlaylist(newPlaylist);
   };
-
   if (isLoading) return <MusicLoader />;
   if (error) return <MusicError error={error} />;
 
@@ -228,7 +228,7 @@ function MusicCard({
         <div className="aspect-square bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mb-3 relative overflow-hidden">
           {music.posterUrl ? (
             <img
-              src={music.posterUrl}
+              src={`http://localhost:3000/${music.posterUrl}`}
               alt={music.title}
               className="w-full h-full object-cover"
             />
@@ -315,7 +315,7 @@ function MusicCard({
         <div className="text-xs text-gray-400 flex items-center">
           <Clock className="w-3 h-3 mr-1" />
           {music.metadata?.duration
-            ? `${Math.floor(music.metadata.duration / 60)}:${(music.metadata.duration % 60).toString().padStart(2, "0")}`
+            ? `${formatTime(music.metadata.duration)}`
             : "--:--"}
         </div>
       </div>
