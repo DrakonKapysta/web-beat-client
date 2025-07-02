@@ -13,7 +13,7 @@ export const Route = createFileRoute({
     if (typeof window !== "undefined") {
       const token = localStorage.getItem("access_token");
       if (token) {
-        throw redirect({ to: "/music/editor" });
+        throw redirect({ to: "/music/visualizer" });
       }
     }
   },
@@ -23,7 +23,7 @@ export const Route = createFileRoute({
 function RouteComponent() {
   const { isLoading, isAuthenticated, login, error } = useAuth();
   const { time, start } = useRedirectTimer({
-    redirectPath: "/",
+    redirectPath: "/music/visualizer",
     startTime: 5,
   });
 

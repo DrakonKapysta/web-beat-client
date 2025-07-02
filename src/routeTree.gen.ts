@@ -13,8 +13,9 @@ import type { CreateFileRoute, FileRoutesByPath } from '@tanstack/react-router'
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProtectedRouteImport } from './routes/_protected'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MusicVisualizerRouteImport } from './routes/music/visualizer'
 import { Route as MusicUploadRouteImport } from './routes/music/upload'
-import { Route as MusicEditorRouteImport } from './routes/music/editor'
+import { Route as MusicBrowseRouteImport } from './routes/music/browse'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as ProtectedAboutRouteImport } from './routes/_protected/about'
@@ -28,14 +29,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MusicVisualizerRoute = MusicVisualizerRouteImport.update({
+  id: '/music/visualizer',
+  path: '/music/visualizer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MusicUploadRoute = MusicUploadRouteImport.update({
   id: '/music/upload',
   path: '/music/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MusicEditorRoute = MusicEditorRouteImport.update({
-  id: '/music/editor',
-  path: '/music/editor',
+const MusicBrowseRoute = MusicBrowseRouteImport.update({
+  id: '/music/browse',
+  path: '/music/browse',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
@@ -60,8 +66,9 @@ export interface FileRoutesByFullPath {
   '/about': typeof ProtectedAboutRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
-  '/music/editor': typeof MusicEditorRoute
+  '/music/browse': typeof MusicBrowseRoute
   '/music/upload': typeof MusicUploadRoute
+  '/music/visualizer': typeof MusicVisualizerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -69,8 +76,9 @@ export interface FileRoutesByTo {
   '/about': typeof ProtectedAboutRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
-  '/music/editor': typeof MusicEditorRoute
+  '/music/browse': typeof MusicBrowseRoute
   '/music/upload': typeof MusicUploadRoute
+  '/music/visualizer': typeof MusicVisualizerRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -79,8 +87,9 @@ export interface FileRoutesById {
   '/_protected/about': typeof ProtectedAboutRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
-  '/music/editor': typeof MusicEditorRoute
+  '/music/browse': typeof MusicBrowseRoute
   '/music/upload': typeof MusicUploadRoute
+  '/music/visualizer': typeof MusicVisualizerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -90,8 +99,9 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth/login'
     | '/auth/register'
-    | '/music/editor'
+    | '/music/browse'
     | '/music/upload'
+    | '/music/visualizer'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -99,8 +109,9 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth/login'
     | '/auth/register'
-    | '/music/editor'
+    | '/music/browse'
     | '/music/upload'
+    | '/music/visualizer'
   id:
     | '__root__'
     | '/'
@@ -108,8 +119,9 @@ export interface FileRouteTypes {
     | '/_protected/about'
     | '/auth/login'
     | '/auth/register'
-    | '/music/editor'
+    | '/music/browse'
     | '/music/upload'
+    | '/music/visualizer'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -117,8 +129,9 @@ export interface RootRouteChildren {
   ProtectedRoute: typeof ProtectedRouteWithChildren
   AuthLoginRoute: typeof AuthLoginRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
-  MusicEditorRoute: typeof MusicEditorRoute
+  MusicBrowseRoute: typeof MusicBrowseRoute
   MusicUploadRoute: typeof MusicUploadRoute
+  MusicVisualizerRoute: typeof MusicVisualizerRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -158,11 +171,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/music/editor': {
-      id: '/music/editor'
-      path: '/music/editor'
-      fullPath: '/music/editor'
-      preLoaderRoute: typeof MusicEditorRouteImport
+    '/music/browse': {
+      id: '/music/browse'
+      path: '/music/browse'
+      fullPath: '/music/browse'
+      preLoaderRoute: typeof MusicBrowseRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/music/upload': {
@@ -170,6 +183,13 @@ declare module '@tanstack/react-router' {
       path: '/music/upload'
       fullPath: '/music/upload'
       preLoaderRoute: typeof MusicUploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/music/visualizer': {
+      id: '/music/visualizer'
+      path: '/music/visualizer'
+      fullPath: '/music/visualizer'
+      preLoaderRoute: typeof MusicVisualizerRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -220,13 +240,13 @@ declare module './routes/auth/register' {
     FileRoutesByPath['/auth/register']['fullPath']
   >
 }
-declare module './routes/music/editor' {
+declare module './routes/music/browse' {
   const createFileRoute: CreateFileRoute<
-    '/music/editor',
-    FileRoutesByPath['/music/editor']['parentRoute'],
-    FileRoutesByPath['/music/editor']['id'],
-    FileRoutesByPath['/music/editor']['path'],
-    FileRoutesByPath['/music/editor']['fullPath']
+    '/music/browse',
+    FileRoutesByPath['/music/browse']['parentRoute'],
+    FileRoutesByPath['/music/browse']['id'],
+    FileRoutesByPath['/music/browse']['path'],
+    FileRoutesByPath['/music/browse']['fullPath']
   >
 }
 declare module './routes/music/upload' {
@@ -236,6 +256,15 @@ declare module './routes/music/upload' {
     FileRoutesByPath['/music/upload']['id'],
     FileRoutesByPath['/music/upload']['path'],
     FileRoutesByPath['/music/upload']['fullPath']
+  >
+}
+declare module './routes/music/visualizer' {
+  const createFileRoute: CreateFileRoute<
+    '/music/visualizer',
+    FileRoutesByPath['/music/visualizer']['parentRoute'],
+    FileRoutesByPath['/music/visualizer']['id'],
+    FileRoutesByPath['/music/visualizer']['path'],
+    FileRoutesByPath['/music/visualizer']['fullPath']
   >
 }
 
@@ -256,8 +285,9 @@ const rootRouteChildren: RootRouteChildren = {
   ProtectedRoute: ProtectedRouteWithChildren,
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
-  MusicEditorRoute: MusicEditorRoute,
+  MusicBrowseRoute: MusicBrowseRoute,
   MusicUploadRoute: MusicUploadRoute,
+  MusicVisualizerRoute: MusicVisualizerRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

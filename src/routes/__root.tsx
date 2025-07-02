@@ -7,8 +7,10 @@ import {
   Link,
   Outlet,
   useLocation,
+  useRouter,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { LogOut } from "lucide-react";
 import { memo, useMemo } from "react";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
@@ -26,7 +28,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 );
 
 const Header = memo(() => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
+  const router = useRouter();
+  const handleLogout = () => {
+    logout();
+    router.navigate({ to: "/", replace: true });
+  };
+
   return (
     <header className="bg-gradient-to-r from-purple-900 via-blue-900 to-indigo-900 shadow-lg border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -59,6 +67,13 @@ const Header = memo(() => {
               <div className="absolute inset-0 bg-white/10 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
             </Link>
             <Link
+              to="/music/browse"
+              className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 relative group [&.active]:text-purple-400"
+            >
+              <span className="relative z-10">Browse</span>
+              <div className="absolute inset-0 bg-white/10 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+            </Link>
+            <Link
               to="/music/upload"
               className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 relative group [&.active]:text-purple-400"
             >
@@ -66,10 +81,10 @@ const Header = memo(() => {
               <div className="absolute inset-0 bg-white/10 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
             </Link>
             <Link
-              to="/music/editor"
+              to="/music/visualizer"
               className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 relative group [&.active]:text-purple-400"
             >
-              <span className="relative z-10">Editor</span>
+              <span className="relative z-10">Visualizer</span>
               <div className="absolute inset-0 bg-white/10 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
             </Link>
             <Link
@@ -83,7 +98,16 @@ const Header = memo(() => {
 
           {/* Action Buttons */}
           {isAuthenticated ? (
-            <div></div>
+            <div>
+              <Button
+                onClick={handleLogout}
+                variant="ghost"
+                className="text-gray-300 hover:text-white hover:bg-white/10 border border-white/20 transition-all duration-200"
+              >
+                <LogOut />
+                Logout
+              </Button>
+            </div>
           ) : (
             <div className="flex items-center space-x-3">
               <Button
