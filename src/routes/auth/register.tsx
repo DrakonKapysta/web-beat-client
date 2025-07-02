@@ -7,7 +7,7 @@ export const Route = createFileRoute({
     if (typeof window !== "undefined") {
       const token = localStorage.getItem("access_token");
       if (token) {
-        throw redirect({ to: "/music/editor" });
+        throw redirect({ to: "/music/visualizer" });
       }
     }
   },
