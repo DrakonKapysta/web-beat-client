@@ -34,11 +34,9 @@ export const EditorHeader: FC<EditorHeaderProps> = memo(
             </div>
             <div>
               <h1 className="text-3xl font-bold text-white bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                Music Editor
+                Music Visualizer
               </h1>
-              <p className="text-gray-300">
-                Create and edit your musical masterpiece
-              </p>
+              <p className="text-gray-300">Look at your musical masterpiece</p>
             </div>
           </div>
 
