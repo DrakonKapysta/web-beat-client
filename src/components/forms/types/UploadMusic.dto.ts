@@ -4,6 +4,5 @@ export interface UploadMusicData {
   album: string;
   genre: string;
   year: number;
-  posterUrl?: string;
   metadata?: Record<string, unknown>;
 }

@@ -97,7 +97,6 @@ function MusicEditor() {
               target.tagName !== "A" &&
               !isPrevented
             ) {
-              console.log("Closing music list. Node name: ", target.nodeName);
               setIsMusicListOpen(false);
             }
           }}

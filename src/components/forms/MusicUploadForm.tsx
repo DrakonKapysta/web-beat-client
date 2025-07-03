@@ -3,9 +3,11 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import type { UploadMusicData } from "./types/UploadMusic.dto";
+import { cn } from "@/lib/utils";
 
 type FormFields = {
   files: FileList;
+  poster?: FileList;
 } & UploadMusicData;
 
 interface FileUploadFormProps {
@@ -13,7 +15,7 @@ interface FileUploadFormProps {
   onUpload?: (
     files: FileList,
     data: UploadMusicData,
-    poster?: File
+    poster?: FileList
   ) => Promise<boolean>;
 }
 
@@ -22,6 +24,7 @@ export const MusicUploadForm: React.FC<FileUploadFormProps> = ({
   isUploading = false,
 }) => {
   const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
+  const [selectedCover, setSelectedCover] = useState<boolean>(false);
   const [isDragOver, setIsDragOver] = useState(false);
 
   const {
@@ -42,11 +45,12 @@ export const MusicUploadForm: React.FC<FileUploadFormProps> = ({
         metadata: data.metadata,
       };
 
-      const res = await onUpload?.(data.files, musicData);
+      const res = await onUpload?.(data.files, musicData, data?.poster);
       if (res) {
         console.log("Files uploaded successfully");
         reset();
         setSelectedFiles(null);
+        setSelectedCover(false);
       }
     }
   };
@@ -271,6 +275,38 @@ export const MusicUploadForm: React.FC<FileUploadFormProps> = ({
             {errors.year && (
               <span className="text-red-400 text-sm">
                 {errors.year.message}
+              </span>
+            )}
+          </div>
+
+          <div className="space-y-2 md:col-span-2">
+            <label
+              htmlFor="cover"
+              className="text-sm font-medium text-gray-300"
+            >
+              <div
+                className={cn(
+                  "flex items-center justify-center text-lg font-semibold cursor-pointer bg-white/10 border-2 border-dashed text-white border-white/70 h-12 rounded-md",
+                  {
+                    "border-green-400 text-green-300": selectedCover,
+                  }
+                )}
+              >
+                <span>Cover</span>
+              </div>
+            </label>
+            <Input
+              type="file"
+              id="cover"
+              disabled={isUploading}
+              className="hidden"
+              {...register("poster", {
+                onChange: () => setSelectedCover(true),
+              })}
+            />
+            {errors.poster && (
+              <span className="text-red-400 text-sm">
+                {errors.poster.message}
               </span>
             )}
           </div>
