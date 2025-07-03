@@ -1,6 +1,5 @@
 import { MusicUploadForm } from "@/components/forms/MusicUploadForm";
 import type { UploadMusicData } from "@/components/forms/types/UploadMusic.dto";
-import { UploadConstruction } from "@/components/under-construction/UploadConstruction";
 import { useFileUpload } from "@/hooks/useFileUpload";
 
 export const Route = createFileRoute({
@@ -12,10 +11,11 @@ function MusicUpload() {
 
   const handleUpload = async (
     files: FileList,
-    musicData: UploadMusicData
+    musicData: UploadMusicData,
+    poster?: FileList
   ): Promise<boolean> => {
     try {
-      const res = await uploadFiles(files, musicData);
+      const res = await uploadFiles(files, musicData, poster);
       if (!res) {
         throw new Error("No response from server");
       }
@@ -26,8 +26,6 @@ function MusicUpload() {
       return false;
     }
   };
-
-  return <UploadConstruction />;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 relative overflow-hidden ">

@@ -8,7 +8,7 @@ export function useFileUpload() {
   const uploadFiles = async (
     files: FileList,
     data?: UploadMusicData,
-    poster?: File
+    poster?: FileList
   ) => {
     setIsUploading(true);
     setError(null);
@@ -17,23 +17,19 @@ export function useFileUpload() {
       const formData = new FormData();
 
       Array.from(files).forEach((file) => {
-        formData.append("file", file); // must be 'music' and 'poste (optional)'
+        formData.append("music", file); // must be 'music' and 'poste (optional)'
       });
 
       if (poster) {
-        formData.append("poster", poster);
+        formData.append("poster", poster[0]);
       }
 
       if (data) {
-        formData.append("fileName", data.title);
+        formData.append("title", data.title);
         formData.append("author", data.author);
         formData.append("album", data.album);
         formData.append("genre", data.genre);
         formData.append("year", data.year.toString());
-
-        if (data.posterUrl) {
-          formData.append("posterUrl", data.posterUrl);
-        }
 
         if (data.metadata) {
           formData.append("metadata", JSON.stringify(data.metadata));
@@ -43,7 +39,9 @@ export function useFileUpload() {
       const response = await fetch("http://localhost:3000/api/music/upload", {
         method: "POST",
         body: formData,
+        credentials: "include",
       });
+      console.log(response);
 
       if (!response.ok) {
         throw new Error("Upload failed");
