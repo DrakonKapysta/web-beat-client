@@ -11,7 +11,7 @@ import { validate } from "@/api/auth/validate";
 
 export const Route = createFileRoute({
   beforeLoad: async ({ search }) => {
-    if (!search.redirect) {
+    if (!search?.redirect) {
       try {
         console.log("Validating user...");
         const user = await validate();
