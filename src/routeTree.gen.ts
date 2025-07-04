@@ -13,12 +13,12 @@ import type { CreateFileRoute, FileRoutesByPath } from '@tanstack/react-router'
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProtectedRouteImport } from './routes/_protected'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as MusicVisualizerRouteImport } from './routes/music/visualizer'
-import { Route as MusicUploadRouteImport } from './routes/music/upload'
-import { Route as MusicBrowseRouteImport } from './routes/music/browse'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as ProtectedAboutRouteImport } from './routes/_protected/about'
+import { Route as ProtectedMusicVisualizerRouteImport } from './routes/_protected/music/visualizer'
+import { Route as ProtectedMusicUploadRouteImport } from './routes/_protected/music/upload'
+import { Route as ProtectedMusicBrowseRouteImport } from './routes/_protected/music/browse'
 
 const ProtectedRoute = ProtectedRouteImport.update({
   id: '/_protected',
@@ -27,21 +27,6 @@ const ProtectedRoute = ProtectedRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MusicVisualizerRoute = MusicVisualizerRouteImport.update({
-  id: '/music/visualizer',
-  path: '/music/visualizer',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MusicUploadRoute = MusicUploadRouteImport.update({
-  id: '/music/upload',
-  path: '/music/upload',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MusicBrowseRoute = MusicBrowseRouteImport.update({
-  id: '/music/browse',
-  path: '/music/browse',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
@@ -59,6 +44,22 @@ const ProtectedAboutRoute = ProtectedAboutRouteImport.update({
   path: '/about',
   getParentRoute: () => ProtectedRoute,
 } as any)
+const ProtectedMusicVisualizerRoute =
+  ProtectedMusicVisualizerRouteImport.update({
+    id: '/music/visualizer',
+    path: '/music/visualizer',
+    getParentRoute: () => ProtectedRoute,
+  } as any)
+const ProtectedMusicUploadRoute = ProtectedMusicUploadRouteImport.update({
+  id: '/music/upload',
+  path: '/music/upload',
+  getParentRoute: () => ProtectedRoute,
+} as any)
+const ProtectedMusicBrowseRoute = ProtectedMusicBrowseRouteImport.update({
+  id: '/music/browse',
+  path: '/music/browse',
+  getParentRoute: () => ProtectedRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -66,9 +67,9 @@ export interface FileRoutesByFullPath {
   '/about': typeof ProtectedAboutRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
-  '/music/browse': typeof MusicBrowseRoute
-  '/music/upload': typeof MusicUploadRoute
-  '/music/visualizer': typeof MusicVisualizerRoute
+  '/music/browse': typeof ProtectedMusicBrowseRoute
+  '/music/upload': typeof ProtectedMusicUploadRoute
+  '/music/visualizer': typeof ProtectedMusicVisualizerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -76,9 +77,9 @@ export interface FileRoutesByTo {
   '/about': typeof ProtectedAboutRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
-  '/music/browse': typeof MusicBrowseRoute
-  '/music/upload': typeof MusicUploadRoute
-  '/music/visualizer': typeof MusicVisualizerRoute
+  '/music/browse': typeof ProtectedMusicBrowseRoute
+  '/music/upload': typeof ProtectedMusicUploadRoute
+  '/music/visualizer': typeof ProtectedMusicVisualizerRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -87,9 +88,9 @@ export interface FileRoutesById {
   '/_protected/about': typeof ProtectedAboutRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
-  '/music/browse': typeof MusicBrowseRoute
-  '/music/upload': typeof MusicUploadRoute
-  '/music/visualizer': typeof MusicVisualizerRoute
+  '/_protected/music/browse': typeof ProtectedMusicBrowseRoute
+  '/_protected/music/upload': typeof ProtectedMusicUploadRoute
+  '/_protected/music/visualizer': typeof ProtectedMusicVisualizerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -119,9 +120,9 @@ export interface FileRouteTypes {
     | '/_protected/about'
     | '/auth/login'
     | '/auth/register'
-    | '/music/browse'
-    | '/music/upload'
-    | '/music/visualizer'
+    | '/_protected/music/browse'
+    | '/_protected/music/upload'
+    | '/_protected/music/visualizer'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -129,9 +130,6 @@ export interface RootRouteChildren {
   ProtectedRoute: typeof ProtectedRouteWithChildren
   AuthLoginRoute: typeof AuthLoginRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
-  MusicBrowseRoute: typeof MusicBrowseRoute
-  MusicUploadRoute: typeof MusicUploadRoute
-  MusicVisualizerRoute: typeof MusicVisualizerRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -171,26 +169,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/music/browse': {
-      id: '/music/browse'
+    '/_protected/music/browse': {
+      id: '/_protected/music/browse'
       path: '/music/browse'
       fullPath: '/music/browse'
-      preLoaderRoute: typeof MusicBrowseRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof ProtectedMusicBrowseRouteImport
+      parentRoute: typeof ProtectedRoute
     }
-    '/music/upload': {
-      id: '/music/upload'
+    '/_protected/music/upload': {
+      id: '/_protected/music/upload'
       path: '/music/upload'
       fullPath: '/music/upload'
-      preLoaderRoute: typeof MusicUploadRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof ProtectedMusicUploadRouteImport
+      parentRoute: typeof ProtectedRoute
     }
-    '/music/visualizer': {
-      id: '/music/visualizer'
+    '/_protected/music/visualizer': {
+      id: '/_protected/music/visualizer'
       path: '/music/visualizer'
       fullPath: '/music/visualizer'
-      preLoaderRoute: typeof MusicVisualizerRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof ProtectedMusicVisualizerRouteImport
+      parentRoute: typeof ProtectedRoute
     }
   }
 }
@@ -240,40 +238,46 @@ declare module './routes/auth/register' {
     FileRoutesByPath['/auth/register']['fullPath']
   >
 }
-declare module './routes/music/browse' {
+declare module './routes/_protected/music/browse' {
   const createFileRoute: CreateFileRoute<
-    '/music/browse',
-    FileRoutesByPath['/music/browse']['parentRoute'],
-    FileRoutesByPath['/music/browse']['id'],
-    FileRoutesByPath['/music/browse']['path'],
-    FileRoutesByPath['/music/browse']['fullPath']
+    '/_protected/music/browse',
+    FileRoutesByPath['/_protected/music/browse']['parentRoute'],
+    FileRoutesByPath['/_protected/music/browse']['id'],
+    FileRoutesByPath['/_protected/music/browse']['path'],
+    FileRoutesByPath['/_protected/music/browse']['fullPath']
   >
 }
-declare module './routes/music/upload' {
+declare module './routes/_protected/music/upload' {
   const createFileRoute: CreateFileRoute<
-    '/music/upload',
-    FileRoutesByPath['/music/upload']['parentRoute'],
-    FileRoutesByPath['/music/upload']['id'],
-    FileRoutesByPath['/music/upload']['path'],
-    FileRoutesByPath['/music/upload']['fullPath']
+    '/_protected/music/upload',
+    FileRoutesByPath['/_protected/music/upload']['parentRoute'],
+    FileRoutesByPath['/_protected/music/upload']['id'],
+    FileRoutesByPath['/_protected/music/upload']['path'],
+    FileRoutesByPath['/_protected/music/upload']['fullPath']
   >
 }
-declare module './routes/music/visualizer' {
+declare module './routes/_protected/music/visualizer' {
   const createFileRoute: CreateFileRoute<
-    '/music/visualizer',
-    FileRoutesByPath['/music/visualizer']['parentRoute'],
-    FileRoutesByPath['/music/visualizer']['id'],
-    FileRoutesByPath['/music/visualizer']['path'],
-    FileRoutesByPath['/music/visualizer']['fullPath']
+    '/_protected/music/visualizer',
+    FileRoutesByPath['/_protected/music/visualizer']['parentRoute'],
+    FileRoutesByPath['/_protected/music/visualizer']['id'],
+    FileRoutesByPath['/_protected/music/visualizer']['path'],
+    FileRoutesByPath['/_protected/music/visualizer']['fullPath']
   >
 }
 
 interface ProtectedRouteChildren {
   ProtectedAboutRoute: typeof ProtectedAboutRoute
+  ProtectedMusicBrowseRoute: typeof ProtectedMusicBrowseRoute
+  ProtectedMusicUploadRoute: typeof ProtectedMusicUploadRoute
+  ProtectedMusicVisualizerRoute: typeof ProtectedMusicVisualizerRoute
 }
 
 const ProtectedRouteChildren: ProtectedRouteChildren = {
   ProtectedAboutRoute: ProtectedAboutRoute,
+  ProtectedMusicBrowseRoute: ProtectedMusicBrowseRoute,
+  ProtectedMusicUploadRoute: ProtectedMusicUploadRoute,
+  ProtectedMusicVisualizerRoute: ProtectedMusicVisualizerRoute,
 }
 
 const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
@@ -285,9 +289,6 @@ const rootRouteChildren: RootRouteChildren = {
   ProtectedRoute: ProtectedRouteWithChildren,
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
-  MusicBrowseRoute: MusicBrowseRoute,
-  MusicUploadRoute: MusicUploadRoute,
-  MusicVisualizerRoute: MusicVisualizerRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

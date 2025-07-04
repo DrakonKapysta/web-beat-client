@@ -9,27 +9,14 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [authState, setAuthState] = React.useState<{
-    user: User | null;
-    isAuthenticated: boolean;
-    isLoading: boolean;
-  }>({
-    user: null,
-    isAuthenticated: false,
-    isLoading: false,
-  });
+  const [user, setUser] = React.useState<User | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-
-  React.useEffect(() => {
-    const accessToken = localStorage.getItem("access_token");
-    if (accessToken) {
-      setAuthState({ user: null, isAuthenticated: true, isLoading: false });
-    }
-  }, []);
 
   const login = async (loginData: LoginData): Promise<void> => {
     try {
-      setAuthState((prev) => ({ ...prev, isLoading: true }));
+      setIsLoading(true);
       const { data, status } = await loginAPI(loginData);
 
       if (status !== 200) {
@@ -40,39 +27,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         localStorage.setItem("access_token", data.access_token);
       }
 
-      setAuthState({
-        user: data.user,
-        isAuthenticated: true,
-        isLoading: false,
-      });
+      setIsAuthenticated(true);
+      setUser(data.user);
+      setIsLoading(false);
     } catch (error: unknown) {
       console.error("Login error:", error);
       setError((error as Error).message);
       setTimeout(() => setError(null), 5000);
     } finally {
-      setAuthState((prev) => ({ ...prev, isLoading: false }));
+      setIsLoading(false);
     }
   };
 
   const register = async (registerData: RegisterData): Promise<void> => {
     try {
-      setAuthState((prev) => ({ ...prev, isLoading: true }));
+      setIsLoading(true);
       const { data, status } = await registerAPI(registerData);
 
       if (status !== 201) {
         throw new Error("Registration failed");
       }
 
-      setAuthState({
-        user: data.user,
-        isAuthenticated: true,
-        isLoading: false,
-      });
+      setIsAuthenticated(true);
+      setUser(data.user);
+      setIsLoading(false);
     } catch (error: unknown) {
       setError((error as Error).message);
       setTimeout(() => setError(null), 5000);
     } finally {
-      setAuthState((prev) => ({ ...prev, isLoading: false }));
+      setIsLoading(false);
     }
   };
 
@@ -81,11 +64,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       localStorage.removeItem("access_token");
     }
 
-    setAuthState({
-      user: null,
-      isAuthenticated: false,
-      isLoading: false,
-    });
+    setIsAuthenticated(false);
+    setUser(null);
   };
 
   const refreshToken = async (): Promise<void> => {
@@ -94,7 +74,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
       if (!token) {
-        setAuthState((prev) => ({ ...prev, isLoading: false }));
+        setIsLoading(false);
         return;
       }
 
@@ -110,11 +90,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       const { user } = await response.json();
-      setAuthState({
-        user,
-        isAuthenticated: true,
-        isLoading: false,
-      });
     } catch (error) {
       console.error("Token verification failed:", error);
       logout();
@@ -124,7 +99,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   return (
     <AuthContext.Provider
       value={{
-        ...authState,
+        user,
+        isAuthenticated,
+        isLoading,
         error,
         login,
         register,

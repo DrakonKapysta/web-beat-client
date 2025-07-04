@@ -34,8 +34,8 @@ function Index() {
                   </div>
                   <div className="mt-3 sm:mt-0 sm:ml-3">
                     <Link
-                      to="/"
-                      className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-purple-100 bg-purple-800 bg-opacity-60 hover:bg-opacity-75 md:py-4 md:text-lg md:px-10 transition-all duration-300"
+                      to="/music/browse"
+                      className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-purple-100 bg-purple-800 bg-opacity-60 hover:bg-opacity-75 md:py-4 md:text-lg md:px-10 transition-all duration-300 transform hover:scale-105"
                     >
                       Browse Library
                     </Link>

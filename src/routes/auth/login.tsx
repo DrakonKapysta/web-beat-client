@@ -7,14 +7,19 @@ import { Check } from "lucide-react";
 import React, { useEffect } from "react";
 import { BackLink } from "./-components/BackLink";
 import { useRedirectTimer } from "@/hooks/useRedirectTimer";
+import { validate } from "@/api/auth/validate";
 
 export const Route = createFileRoute({
-  beforeLoad: () => {
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("access_token");
-      if (token) {
-        throw redirect({ to: "/music/visualizer" });
+  beforeLoad: async ({ search }) => {
+    if (!search.redirect) {
+      try {
+        console.log("Validating user...");
+        const user = await validate();
+      } catch (error) {
+        console.log(error);
+        return;
       }
+      throw redirect({ to: "/music/browse" });
     }
   },
   component: RouteComponent,

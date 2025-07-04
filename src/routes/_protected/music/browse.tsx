@@ -148,9 +148,11 @@ function BrowseMusic() {
                   onChange={(e) => setSelectedGenre(e.target.value)}
                   className="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white focus:border-purple-400 focus:ring-purple-400"
                 >
-                  <option value="all">All Genres</option>
+                  <option className=" bg-gray-800 " value="all">
+                    All Genres
+                  </option>
                   {genres.map((genre) => (
-                    <option key={genre} value={genre} className="bg-gray-800">
+                    <option key={genre} value={genre} className="bg-gray-800 ">
                       {genre}
                     </option>
                   ))}

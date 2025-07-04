@@ -1,3 +1,4 @@
+import { validate } from "@/api/auth/validate";
 import { Outlet, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute({
@@ -12,16 +13,24 @@ export const Route = createFileRoute({
         search: { redirect: location.href },
       });
     }
+    try {
+      const user = await validate();
+      if (!user) {
+        throw redirect({
+          to: "/auth/login",
+          search: { redirect: location.href },
+        });
+      }
+    } catch (error: unknown) {
+      throw redirect({
+        to: "/auth/login",
+        search: { redirect: location.href },
+      });
+    }
   },
   component: ProtectedLayout,
 });
 
 function ProtectedLayout() {
-  return (
-    <div>
-      <h1>Hello from protected</h1>
-      <p className="text-black">Загружаем треки...</p>
-      <Outlet />
-    </div>
-  );
+  return <Outlet />;
 }
