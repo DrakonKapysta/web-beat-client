@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import type { AuthContextType } from "@/providers/auth/AuthContext";
 import { AuthProvider } from "@/providers/auth/AuthProvider";
 import type { QueryClient } from "@tanstack/react-query";
 import {
@@ -13,19 +14,22 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { LogOut } from "lucide-react";
 import { memo, useMemo } from "react";
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
-  {
-    component: RootComponent,
-    notFoundComponent: () => {
-      return (
-        <div>
-          <p>This is the notFoundComponent configured on root route</p>
-          <Link to="/">Start Over</Link>
-        </div>
-      );
-    },
-  }
-);
+interface RouterContext {
+  auth: AuthContextType | undefined;
+  queryClient: QueryClient;
+}
+
+export const Route = createRootRouteWithContext<RouterContext>()({
+  component: RootComponent,
+  notFoundComponent: () => {
+    return (
+      <div>
+        <p>This is the notFoundComponent configured on root route</p>
+        <Link to="/">Start Over</Link>
+      </div>
+    );
+  },
+});
 
 const Header = memo(() => {
   const { isAuthenticated, logout } = useAuth();

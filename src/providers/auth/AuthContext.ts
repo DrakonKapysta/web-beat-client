@@ -1,7 +1,7 @@
 import type { AuthState, LoginData, RegisterData } from "@/types/auth";
 import { createContext } from "react";
 
-interface AuthContextType extends AuthState {
+export interface AuthContextType extends AuthState {
   error: string | null;
   login: (data: LoginData) => Promise<void>;
   register: (data: RegisterData) => Promise<void>;
