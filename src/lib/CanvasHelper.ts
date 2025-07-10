@@ -61,7 +61,7 @@ export class CanvasHelper {
     this.ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
     this.ctx.fillRect(0, 0, this.WIDTH, this.HEIGHT);
 
-    const usableData = Math.floor(this.bufferLength * 0.75);
+    const usableData = Math.floor(this.bufferLength * 0.5);
 
     const barWidth = this.WIDTH / usableData;
 
