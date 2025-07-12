@@ -21,6 +21,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const { data, status } = await loginAPI(loginData);
 
         if (status !== 200) {
+          console.log("Login failed with status:", status);
           throw new Error("Login failed");
         }
 
@@ -101,6 +102,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       logout();
     }
   };
+
+  React.useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
+    }
+  }, []);
 
   return (
     <AuthContext.Provider

@@ -2,47 +2,48 @@ import { LoginForm } from "@/components/forms/LoginForm";
 import { MusicLoader } from "@/components/MusicLoader";
 import { useAuth } from "@/hooks/useAuth";
 import type { LoginData } from "@/types/auth";
-import { Link, redirect } from "@tanstack/react-router";
+import {
+  Link,
+  redirect,
+  useRouter,
+  useRouterState,
+} from "@tanstack/react-router";
 import { Check } from "lucide-react";
-import React, { useEffect } from "react";
 import { BackLink } from "./-components/BackLink";
 import { useRedirectTimer } from "@/hooks/useRedirectTimer";
-import { validate } from "@/api/auth/validate";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const Route = createFileRoute({
-  beforeLoad: async ({ search }) => {
-    if (!search?.redirect) {
-      try {
-        console.log("Validating user...");
-        const user = await validate();
-      } catch (error) {
-        console.log(error);
-        return;
-      }
-      throw redirect({ to: "/music/browse" });
+  beforeLoad: ({ context, search }) => {
+    if (context.auth?.isAuthenticated) {
+      throw redirect({ to: search.redirect || "/music/browse" });
     }
   },
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const { isLoading, isAuthenticated, login, error } = useAuth();
+  const auth = useAuth();
+  const queryClient = useQueryClient();
+  const isRouteLoading = useRouterState({ select: (state) => state.isLoading });
   const { time, start } = useRedirectTimer({
-    redirectPath: "/music/visualizer",
+    redirectPath: "/music/browse",
     startTime: 5,
+    invalidate: true,
   });
 
-  useEffect(() => {
-    if (isAuthenticated) start();
-  }, [isAuthenticated, start]);
-
-  const handleSubmit = (data: LoginData) => {
-    login(data);
+  const handleSubmit = async (data: LoginData) => {
+    try {
+      await auth.login(data);
+      queryClient.clear();
+      start();
+    } catch (error) {}
   };
+  const isLoggingIn = isRouteLoading || auth.isLoading;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 relative overflow-hidden">
-      {isLoading ? (
+      {isLoggingIn ? (
         <MusicLoader />
       ) : (
         <>
@@ -104,13 +105,13 @@ function RouteComponent() {
 
             {/* Login Form Card */}
             <div className="flex flex-col items-center justify-center min-h-64 bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-8">
-              {!isAuthenticated ? (
+              {!auth.isAuthenticated ? (
                 <div className="w-full">
                   <LoginForm onSubmit={handleSubmit} />
                   {/* Divider */}
-                  {error && (
+                  {auth.error && (
                     <p className="text-red-500 block w-full mt-6 text-center">
-                      {error}
+                      {auth.error}
                     </p>
                   )}
                   <div className="my-6 flex items-center w-full">
@@ -154,7 +155,7 @@ function RouteComponent() {
                       className="w-1/2 h-1/2 animate-dashOffset "
                     />
                   </div>
-                  {isAuthenticated && (
+                  {auth.isAuthenticated && (
                     <p className="block mt-4 text-white text-xl">
                       Time for redirect: <span>{time}</span>
                     </p>

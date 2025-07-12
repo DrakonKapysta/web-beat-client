@@ -1,8 +1,9 @@
-import { useRouter } from "@tanstack/react-router";
+import { useNavigate, useRouter } from "@tanstack/react-router";
 import React from "react";
 
 interface useRedirectTimerProps {
   autoStart?: boolean;
+  invalidate?: boolean;
   startTime?: number;
   redirectPath?: string;
 }
@@ -19,10 +20,12 @@ export function useRedirectTimer({
   autoStart = false,
   startTime = 5,
   redirectPath = "/",
+  invalidate = false,
 }: useRedirectTimerProps = {}): RedirectTimerReturn {
   const [time, setTime] = React.useState(startTime);
   const [isRunning, setIsRunning] = React.useState(false);
   const [hasRedirected, setHasRedirected] = React.useState(false);
+  const navigate = useNavigate();
   const router = useRouter();
   const timerRef = React.useRef<NodeJS.Timeout | null>(null);
 
@@ -52,11 +55,17 @@ export function useRedirectTimer({
   }, []);
 
   React.useEffect(() => {
-    if (time === 0 && !isRunning && !hasRedirected) {
-      setHasRedirected(true);
-      router.navigate({ to: redirectPath, replace: true });
-    }
-  }, [time, isRunning, hasRedirected, router, redirectPath]);
+    const handleRedirect = async () => {
+      if (time === 0 && !isRunning && !hasRedirected) {
+        setHasRedirected(true);
+        if (invalidate) {
+          await router.invalidate();
+        }
+        await navigate({ to: redirectPath });
+      }
+    };
+    handleRedirect();
+  }, [time, isRunning, hasRedirected, redirectPath]);
 
   const reset = React.useCallback(() => {
     stop();
