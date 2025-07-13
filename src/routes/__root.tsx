@@ -32,7 +32,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 });
 
 const Header = memo(() => {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth();
   const router = useRouter();
   const navigate = useNavigate();
   const handleLogout = async () => {
@@ -65,13 +65,15 @@ const Header = memo(() => {
 
           {/* Navigation Links */}
           <nav className="hidden md:flex space-x-8">
-            <Link
-              to="/"
-              className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 relative group"
-            >
-              <span className="relative z-10">Home</span>
-              <div className="absolute inset-0 bg-white/10 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-            </Link>
+            {!isAuthenticated && (
+              <Link
+                to="/"
+                className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 relative group"
+              >
+                <span className="relative z-10">Home</span>
+                <div className="absolute inset-0 bg-white/10 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+              </Link>
+            )}
             <Link
               to="/music/browse"
               className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 relative group [&.active]:text-purple-400"
@@ -79,13 +81,15 @@ const Header = memo(() => {
               <span className="relative z-10">Browse</span>
               <div className="absolute inset-0 bg-white/10 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
             </Link>
-            <Link
-              to="/music/upload"
-              className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 relative group [&.active]:text-purple-400"
-            >
-              <span className="relative z-10">Upload</span>
-              <div className="absolute inset-0 bg-white/10 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-            </Link>
+            {user?.roles.includes("moderator") && (
+              <Link
+                to="/music/upload"
+                className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 relative group [&.active]:text-purple-400"
+              >
+                <span className="relative z-10">Upload</span>
+                <div className="absolute inset-0 bg-white/10 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+              </Link>
+            )}
             <Link
               to="/music/visualizer"
               className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 relative group [&.active]:text-purple-400"
