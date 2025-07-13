@@ -1,3 +1,7 @@
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "@tanstack/react-router";
+import React from "react";
+
 interface MusicErrorProps {
   error?: Error | string;
   onRetry?: () => void;
@@ -9,8 +13,24 @@ export function MusicError({
   onRetry,
   title = "Something went wrong!",
 }: MusicErrorProps) {
-  const errorMessage =
-    typeof error === "string" ? error : error?.message || "Неизвестная ошибка";
+  const auth = useAuth();
+  const navigate = useNavigate();
+  const errorMessage = typeof error === "string" ? error : error?.message;
+
+  React.useEffect(() => {
+    const handleRedirect = async () => {
+      console.error("Unauthorized access, redirecting to login...");
+      await auth.logout();
+      navigate({
+        to: "/auth/login",
+        search: { redirect: window.location.href },
+      });
+    };
+
+    if ((error as any)?.status === 401) {
+      handleRedirect();
+    }
+  }, [error, onRetry, auth, navigate]);
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-br from-red-900/20 via-gray-900/20 to-black/20">

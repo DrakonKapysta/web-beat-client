@@ -3,6 +3,8 @@ import { AuthContext } from "./AuthContext";
 import type { LoginData, RegisterData, User } from "@/types/auth";
 import { loginAPI } from "@/api/auth/login";
 import { registerAPI } from "@/api/auth/register";
+import { validate } from "@/api/auth/validate";
+import { useRouter } from "@tanstack/react-router";
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -21,6 +23,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const { data, status } = await loginAPI(loginData);
 
         if (status !== 200) {
+          console.log("Login failed with status:", status);
           throw new Error("Login failed");
         }
 
@@ -74,33 +77,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser(null);
   }, []);
 
-  const refreshToken = async (): Promise<void> => {
-    try {
-      const token =
-        typeof window !== "undefined" ? localStorage.getItem("token") : null;
-
-      if (!token) {
-        setIsLoading(false);
-        return;
-      }
-
-      const response = await fetch("/api/auth/verify", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        logout();
-        return;
-      }
-
-      const { user } = await response.json();
-    } catch (error) {
-      console.error("Token verification failed:", error);
-      logout();
+  React.useEffect(() => {
+    setIsLoading(true);
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      setIsAuthenticated(true);
+      setIsLoading(false);
+      return;
     }
-  };
+    setIsAuthenticated(false);
+    setUser(null);
+    setIsLoading(false);
+  }, []);
+
+  // Debug effect to track auth state changes
+  React.useEffect(() => {
+    console.log("Auth state changed:", {
+      isLoading,
+      isAuthenticated,
+      user: user ? { id: user.id, email: user.email } : null,
+    });
+  }, [isLoading, isAuthenticated, user]);
 
   return (
     <AuthContext.Provider
@@ -112,7 +109,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         login,
         register,
         logout,
-        refreshToken,
       }}
     >
       {children}

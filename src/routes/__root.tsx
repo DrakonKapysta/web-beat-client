@@ -1,13 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import type { AuthContextType } from "@/providers/auth/AuthContext";
-import { AuthProvider } from "@/providers/auth/AuthProvider";
 import type { QueryClient } from "@tanstack/react-query";
 import {
   createRootRouteWithContext,
   Link,
   Outlet,
   useLocation,
+  useNavigate,
   useRouter,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
@@ -34,9 +34,11 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 const Header = memo(() => {
   const { isAuthenticated, logout } = useAuth();
   const router = useRouter();
-  const handleLogout = () => {
-    logout();
-    router.navigate({ to: "/", replace: true });
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    await logout();
+    await router.invalidate();
+    await navigate({ to: "/auth/login" });
   };
 
   return (
@@ -198,15 +200,13 @@ function RootComponent() {
   }, [location.pathname]);
 
   return (
-    <AuthProvider>
-      <div className="h-screen flex flex-col overflow-hidden">
-        {!shouldHideHeader && <Header />}
+    <div className="h-screen flex flex-col overflow-hidden">
+      {!shouldHideHeader && <Header />}
 
-        <div className="flex-1 overflow-auto scrollbar-hidden">
-          <Outlet />
-        </div>
-        <TanStackRouterDevtools />
+      <div className="flex-1 overflow-auto scrollbar-hidden">
+        <Outlet />
       </div>
-    </AuthProvider>
+      <TanStackRouterDevtools />
+    </div>
   );
 }

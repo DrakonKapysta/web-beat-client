@@ -17,7 +17,7 @@ import {
   Calendar,
   Filter,
 } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { formatTime } from "@/lib/formatTime";
 
 export const Route = createFileRoute({
@@ -25,14 +25,18 @@ export const Route = createFileRoute({
 });
 
 function BrowseMusic() {
-  const { data: musics, isLoading, error } = useQuery(musicsQueryOptions());
+  const {
+    data: musics,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery(musicsQueryOptions());
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("all");
   const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [playlist, setPlaylist] = useState<Set<string>>(new Set());
 
-  // Фильтрация музыки
   const filteredMusics = useMemo(() => {
     if (!musics) return [];
 
@@ -80,7 +84,7 @@ function BrowseMusic() {
     setPlaylist(newPlaylist);
   };
   if (isLoading) return <MusicLoader />;
-  if (error) return <MusicError error={error} />;
+  // if (error) return <MusicError error={error} onRetry={handleRetry} />;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 relative overflow-hidden">

@@ -5,6 +5,6 @@ export const musicsQueryOptions = () =>
   queryOptions({
     queryKey: ["musics"],
     queryFn: () => fetchMusics(),
-    retry: 2,
+    retry: 3,
     retryDelay: 1000,
   });
