@@ -97,13 +97,6 @@ const Header = memo(() => {
               <span className="relative z-10">Visualizer</span>
               <div className="absolute inset-0 bg-white/10 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
             </Link>
-            <Link
-              to="/about"
-              className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 relative group"
-            >
-              <span className="relative z-10">About</span>
-              <div className="absolute inset-0 bg-white/10 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-            </Link>
           </nav>
 
           {/* Action Buttons */}
