@@ -38,7 +38,6 @@
   display: none; /* Safari and Chrome */
 }
 
-/* Медленное вращение для диска */
 @keyframes spin-slow {
   from {
     transform: rotate(0deg);
@@ -52,7 +51,6 @@
   animation: spin-slow 3s linear infinite;
 }
 
-/* Плавающие ноты */
 @keyframes float {
   0%,
   100% {
@@ -95,7 +93,6 @@
   animation-delay: 1.5s;
 }
 
-/* Дополнительные эффекты */
 @keyframes progress-bar {
   0% {
     transform: translateX(-100%);

@@ -183,7 +183,6 @@ Header.displayName = "Header";
 function RootComponent() {
   const location = useLocation();
 
-  // Мемоизируем проверку для избежания лишних вычислений
   const shouldHideHeader = useMemo(() => {
     const pagesWithoutHeader = [
       "/",

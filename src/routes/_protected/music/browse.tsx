@@ -53,7 +53,6 @@ function BrowseMusic() {
     });
   }, [musics, searchQuery, selectedGenre]);
 
-  // Уникальные жанры для фильтра
   const genres = useMemo(() => {
     if (!musics) return [];
     const uniqueGenres = [...new Set(musics.map((music) => music.genre))];
