@@ -15,8 +15,7 @@ export function MusicError({
 }: MusicErrorProps) {
   const auth = useAuth();
   const navigate = useNavigate();
-  const errorMessage =
-    typeof error === "string" ? error : error?.message || "Неизвестная ошибка";
+  const errorMessage = typeof error === "string" ? error : error?.message;
 
   React.useEffect(() => {
     const handleRedirect = async () => {

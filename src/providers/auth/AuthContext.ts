@@ -6,6 +6,5 @@ export interface AuthContextType extends AuthState {
   login: (data: LoginData) => Promise<void>;
   register: (data: RegisterData) => Promise<void>;
   logout: () => Promise<void>;
-  refreshToken: () => Promise<void>;
 }
 export const AuthContext = createContext<AuthContextType | null>(null);

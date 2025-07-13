@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import type { AuthContextType } from "@/providers/auth/AuthContext";
-import { AuthProvider } from "@/providers/auth/AuthProvider";
 import type { QueryClient } from "@tanstack/react-query";
 import {
   createRootRouteWithContext,

@@ -5,11 +5,6 @@ export const musicsQueryOptions = () =>
   queryOptions({
     queryKey: ["musics"],
     queryFn: () => fetchMusics(),
-    retry: (failureCount, error) => {
-      if ((error as any)?.status === 401) {
-        return false;
-      }
-      return failureCount < 2;
-    },
+    retry: 3,
     retryDelay: 1000,
   });
