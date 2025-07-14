@@ -12,7 +12,6 @@ export const TransportControlsProgress: React.FC<
 > = (props) => {
   const context = useContext(TransportControlsContext);
 
-  // Используем пропсы или данные из контекста
   const currentTime = props.currentTime ?? context?.currentTime ?? 0;
   const duration = props.duration ?? context?.duration ?? 0;
   const seekTo = props.seekTo ?? context?.seekTo ?? (() => {});

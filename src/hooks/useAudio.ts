@@ -17,6 +17,7 @@ export const useAudio = () => {
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
+
     setIsLoading(true);
     const handleTimeUpdate = () => {
       setCurrentTime(audio.currentTime);
@@ -34,14 +35,20 @@ export const useAudio = () => {
       setCurrentTime(0);
     };
 
+    const handleLoadStart = () => {
+      setIsLoading(true);
+    };
+
     audio.addEventListener("timeupdate", handleTimeUpdate);
     audio.addEventListener("loadedmetadata", handleLoadedMetadata);
     audio.addEventListener("ended", handleEnded);
+    audio.addEventListener("loadstart", handleLoadStart);
 
     return () => {
       audio.removeEventListener("timeupdate", handleTimeUpdate);
       audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
       audio.removeEventListener("ended", handleEnded);
+      audio.removeEventListener("loadstart", handleLoadStart);
     };
   }, []);
 
@@ -199,7 +206,27 @@ export const useAudio = () => {
     if (canvasHelperRef.current) {
       canvasHelperRef.current.stopAnimation();
     }
+    audioRef.current?.pause();
     setIsPlaying(false);
+  }, []);
+
+  const playAudio = useCallback(() => {
+    if (!audioRef.current || !audioContextRef.current) {
+      return;
+    }
+    if (isLoading) {
+      console.log("Audio is still loading, cannot play yet.");
+      return;
+    }
+    if (audioContextRef.current.state === "suspended") {
+      audioContextRef.current.resume().catch((error) => {
+        console.error("Error resuming audio context:", error);
+      });
+    }
+    audioRef.current?.play().catch((error) => {
+      console.error("Error playing audio:", error);
+    });
+    setIsPlaying(true);
   }, []);
 
   const handlePlayPause = useCallback(() => {
@@ -252,6 +279,7 @@ export const useAudio = () => {
     currentTime,
     duration,
     isLoading,
+    playAudio,
     initCanvas,
     seekTo,
     getVolume,

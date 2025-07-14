@@ -3,8 +3,6 @@ import { AuthContext } from "./AuthContext";
 import type { LoginData, RegisterData, User } from "@/types/auth";
 import { loginAPI } from "@/api/auth/login";
 import { registerAPI } from "@/api/auth/register";
-import { validate } from "@/api/auth/validate";
-import { useRouter } from "@tanstack/react-router";
 
 interface AuthProviderProps {
   children: React.ReactNode;
